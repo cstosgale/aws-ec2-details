@@ -19,7 +19,7 @@ In order for the script to work, you need to have:
   - xlsxwriter
   - json
   - os
-- Appropriate credentials configured that have permission to read billing data. These can be set using the 'aws configure' command.
+- Appropriate credentials configured that have permission to read billing data. These can be set using the `aws configure` command.
 
 The relevant Python libraries can be installed by running:
 > pip install boto3 xlsxwriter

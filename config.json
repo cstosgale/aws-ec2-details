@@ -1,0 +1,30 @@
+{
+	"config_variables": {
+		"billing_account": "",
+		"num_months": 3,
+		"schema": ["Month", "Tribe", "UsageType","UnblendedCost"],
+		"path": "",
+		"wbname":  "aws-cost-and-usage.xlsx"
+	},
+	"arguments": {
+		"Granularity": "MONTHLY",
+		"Filter": {
+			"And": [
+				{"Not": {"Dimensions": { "Key": "USAGE_TYPE", "Values": ["Global-SoftwareUsage-Contracts"]}}},
+				{"Not": {"Dimensions": { "Key": "SERVICE", "Values": ["EC2-Instances", "Outposts", "Premium Support", "Refund", "Savings Plans for Compute usage", "Tax"]}}}
+			] 
+		},
+		"Metrics": [
+			"UnblendedCost"
+		],
+		"GroupBy": [
+			{
+				"Type": "COST_CATEGORY",
+				"Key": "Tribe"}, 
+			{
+				"Type": "DIMENSION",
+				"Key": "LINKED_ACCOUNT"
+			}
+		]
+	}
+}

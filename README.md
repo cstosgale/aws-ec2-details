@@ -15,11 +15,14 @@ In order for the script to work, you need to have:
 - AWS CLI v2 installed
 - Python 3.9 or higher
 - the following python libraries:
-- boto3
-- xlsxwriter
-- json
-- os
-- Appropriate credentials configured that have permission to read billing data. These can be set using the aws configure command.
+  - boto3
+  - xlsxwriter
+  - json
+  - os
+- Appropriate credentials configured that have permission to read billing data. These can be set using the 'aws configure' command.
+
+The relevant Python libraries can be installed by running:
+> pip install boto3 xlsxwriter
 
 ## Running the Script
 To run the script, run:

@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 filepath = os.path.dirname(__file__) + '/config.json'
 with open(filepath) as config_file:
 	config_json = json.load(config_file)
-	billing_account = config_json['config_variables']['billing_account']
+	credential_profile = config_json['config_variables']['credential_profile']
 	num_months = config_json['config_variables']['num_months']
 	schema = config_json['config_variables']['schema']
 	path = config_json['config_variables']['path']
@@ -40,7 +40,7 @@ args = args | {'TimePeriod':
 #Function to connect to AWS and pull the cost data as JSON
 def get_awscli_json(**args):
 	try:
-		session = boto3.Session(profile_name=billing_account)
+		session = boto3.Session(profile_name=credential_profile)
 		client = session.client('ce')
 		response = client.get_cost_and_usage(**args)
 		data = response['ResultsByTime']
@@ -50,7 +50,7 @@ def get_awscli_json(**args):
 			data += get_awscli_json(**args)
 	except botocore.exceptions.ClientError as error:
 		if error.response['Error']['Code'] == 'ExpiredTokenException':
-			print('There has been an issue authenticating with AWS, please ensure you have a valid token named ', billing_account, ' defined in your credentials file')
+			print('There has been an issue authenticating with AWS, please ensure you have a valid token named ', credential_profile, ' defined in your credentials file')
 			print('Error Message: ', error.response['Error']['Message'])
 		else:
 			print('There has been an unknown error communicating with AWS: ', error.response)
@@ -67,9 +67,9 @@ def format_data(jsonresponse):
 					[
 						#Appends the month
 						datetime.datetime.strptime(jitem['TimePeriod']['Start'], '%Y-%m-%d'),
-						#Appends the Tribe Name
-						jitemc['Keys'][0].split('$')[1],
-						#Appends the Usage Type
+						#Appends the First Dimension
+						jitemc['Keys'][0],
+						#Appends the Second Dimension
 						jitemc['Keys'][1],
 						#Appends the cost value
 						float(jitemc['Metrics']['UnblendedCost']['Amount'])

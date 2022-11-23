@@ -1,24 +1,10 @@
 {
 	"config_variables": {
-		"credential_profile": "default",
-		"num_months": 3,
-		"schema": ["Month", "UsageType", "Service", "UnblendedCost"],
+		"credential_profiles": [],
+		"tags": ["Name", "service", "aws:eks:cluster-name", "aws:autoscaling:groupName"],
+		"schema": ["Account", "Name", "Service", "Cluster Name", "Autoscaling Group", "Type"],
 		"path": "",
-		"wbname":  "aws-cost-and-usage.xlsx"
+		"wbname":  "aws-ec2-instances.xlsx"
 	},
-	"arguments": {
-		"Granularity": "MONTHLY",
-		"Metrics": [
-			"UnblendedCost"
-		],
-		"GroupBy": [
-			{
-				"Type": "DIMENSION",
-				"Key": "USAGE_TYPE"}, 
-			{
-				"Type": "DIMENSION",
-				"Key": "SERVICE"
-			}
-		]
-	}
+	"arguments": {}
 }

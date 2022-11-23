@@ -1,4 +1,4 @@
-# aws-cost-and-usage
+# aws-ec2-details
 Python script which uses AWS CLI to pull down AWS EC2 information into excel, allowing you to select the tags you want to export as columns. This uses the aws ec2 command [describe-instances](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html)
 
 ## Configuration

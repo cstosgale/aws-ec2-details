@@ -5,6 +5,7 @@ import xlsxwriter
 import datetime
 import json
 import os
+import traceback
 from dateutil.relativedelta import relativedelta
 
 #Open config file and populate variables
@@ -27,7 +28,6 @@ def get_awscli_json(**args):
 			session = boto3.Session(profile_name=credential_profile)
 			client = session.client('ec2')
 			response = client.describe_instances(**args)
-			
 			for reservation in response['Reservations']:
 				for instance in reservation['Instances']:
 					data_child = []
@@ -35,7 +35,13 @@ def get_awscli_json(**args):
 					data_child.append(credential_profile)
 					#Appends any tags defined in the configuration file
 					for tag in tags:
-					 	data_child.append(get_value_from_key(instance['Tags'], tag))
+						try:
+							if 'Tags' in instance:
+								data_child.append(get_value_from_key(instance['Tags'], tag))
+						except Exception:
+							print('There has been an issue extracting the tags.', '\n', 'Account: ', credential_profile, '\n')
+							traceback.print_exc()
+							print('Instance details:', '\n', instance)
 					#Appends the Instance Type
 					data_child.append(instance['InstanceType'])
 					data.append(data_child)
@@ -45,6 +51,7 @@ def get_awscli_json(**args):
 			#print('Response: ', json.dumps(response, indent=4, sort_keys=True).replace('\\n','\n'))
 			if "NextToken" in response:
 				args['NextToken'] = response['NextToken']
+				print('Getting Next API Response with token ', response['NextToken'])
 				data += get_awscli_json(**args)
 		except botocore.exceptions.ClientError as error:
 			if error.response['Error']['Code'] == 'ExpiredTokenException':
@@ -52,11 +59,13 @@ def get_awscli_json(**args):
 				print('Error Message: ', error.response['Error']['Message'])
 			else:
 				print('There has been an unknown error communicating with AWS: ', error.response)
-			pass
-		except Exception as e:
-			print('There has been an unknown error communicating with AWS.', '\n', 'Account: ', credential_profile, '\n')
-			print(e)
-			pass
+			#pass
+		except Exception:
+			print('There has been an unknown error.', '\n', 'Account: ', credential_profile, '\n')
+			print('Exception details: ', '\n')
+			traceback.print_exc()
+			print(response)
+			#pass
 	return data
 
 #Function to return value based on a key
